@@ -31,5 +31,3 @@ const uint8_t KEY[] = "-----BEGIN PRIVATE KEY-----\r\n"
 "-----END PRIVATE KEY-----\r\n";
  
 #endif //__SECURITY_H__
- 
-#error "You need to get security.h credentials from connector.mbed.com and replace the content of this security.h file"

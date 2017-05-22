@@ -36,6 +36,7 @@
 #define ATMEL           5
 #define MCR20           6
 #define SPIRIT1         7
+#define CELL            8
 
 #define STRINGIFY(s) #s
 
@@ -55,7 +56,7 @@
 #endif
 
 //Select binding mode: UDP or TCP -- note - Mesh networking is IPv6 UDP ONLY
-#ifdef MESH
+#if defined (MESH) || (CELL)
     M2MInterface::BindingMode SOCKET_MODE = M2MInterface::UDP;
 #else
     // WiFi or Ethernet supports both - TCP by default to avoid
@@ -173,11 +174,11 @@ public:
         // make sure security ObjectID/ObjectInstance was created successfully
         if(security) {
             // Add ResourceID's and values to the security ObjectID/ObjectInstance
-            security->set_resource_value(M2MSecurity::M2MServerUri, _server_address);
-            security->set_resource_value(M2MSecurity::SecurityMode, M2MSecurity::Certificate);
-            security->set_resource_value(M2MSecurity::ServerPublicKey, SERVER_CERT, sizeof(SERVER_CERT) - 1);
-            security->set_resource_value(M2MSecurity::PublicKey, CERT, sizeof(CERT) - 1);
-            security->set_resource_value(M2MSecurity::Secretkey, KEY, sizeof(KEY) - 1);
+                    security->set_resource_value(M2MSecurity::M2MServerUri, _server_address);
+                    security->set_resource_value(M2MSecurity::SecurityMode, M2MSecurity::Certificate);
+                    security->set_resource_value(M2MSecurity::ServerPublicKey, SERVER_CERT, sizeof(SERVER_CERT) - 1);
+                    security->set_resource_value(M2MSecurity::PublicKey, CERT, sizeof(CERT) - 1);
+                    security->set_resource_value(M2MSecurity::Secretkey, KEY, sizeof(KEY) - 1);
         }
         return security;
     }
