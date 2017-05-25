@@ -32,6 +32,34 @@ MbedClient mbed_client(device);
 // Instantiate the Cellular class
 UbloxCellularDriverGenAtData cell;
 
+class LedResource {
+public:
+    LedResource() {
+        led_object = M2MInterfaceFactory::create_object("3311");
+        M2MObjectInstance *inst = led_object->create_object_instance();
+
+        // change the last argument to 'true' for observable
+        M2MResource *on_res = inst->create_dynamic_resource("5850", "On/Off", M2MResourceInstance::BOOLEAN, false);
+        on_res->set_operation(M2MBase::GET_PUT_ALLOWED);
+        on_res->set_value(false);
+
+        // uncomment for multi-valued
+        // M2MResource *dimmer_res = inst->create_dynamic_resource("5851", "Dimmer", M2MResourceInstance::BOOLEAN, false);
+        // dimmer_res->set_operation(M2MBase::GET_PUT_ALLOWED);
+        // dimmer_res->set_value(false);
+    }
+
+    ~LedResource() {
+    }
+
+    M2MObject *get_object() {
+        return led_object;
+    }
+
+private:
+    M2MObject *led_object;
+};
+
 int main() {
 
     status_ticker.attach_us(blinky, 250000);
@@ -55,6 +83,9 @@ int main() {
     cell.set_credentials(MBED_CONF_APP_CELL_APN, MBED_CONF_APP_CELL_USER, MBED_CONF_APP_CELL_PASS);
     cell.connect();
 
+    // Create our resources
+    LedResource led_resource;
+
     // Create endpoint interface to manage register and unregister
     mbed_client.create_interface("coap://api.connector.mbed.com:5684", &cell);
 
@@ -67,6 +98,7 @@ int main() {
 
     // Add objects to list
     object_list.push_back(device_object);
+    object_list.push_back(led_resource.get_object());
 
     // Set endpoint registration object
     mbed_client.set_register_object(register_object);
